@@ -176,15 +176,17 @@ class GetSpotipyClient:
 
     @staticmethod
     def skip_release(release, newer_than) -> bool:
+        release_date = Release.parse_release_date(release['release_date'])
         return any((
             VARIOUS_ARTISTS in {artists['name'] for artists in release['artists']},
-            release is None or Release.parse_release_date(release['release_date']) < newer_than,
+            release is None or release_date < newer_than or release_date > datetime.now(),
         ))
 
     @staticmethod
     def skip_episode(episode, newer_than) -> bool:
+        release_date = Release.parse_release_date(episode['release_date'])
         return any((
-            episode is None or Release.parse_release_date(episode['release_date']) < newer_than,
+            episode is None or release_date < newer_than or release_date > datetime.now(),
         ))
 
     def get_release(self, release_uri: str):
