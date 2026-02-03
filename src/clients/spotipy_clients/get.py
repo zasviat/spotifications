@@ -184,6 +184,9 @@ class GetSpotipyClient:
 
     @staticmethod
     def skip_episode(episode, newer_than) -> bool:
+        if episode.get('release_date') is None:
+            return True
+
         release_date = Release.parse_release_date(episode['release_date'])
         return any((
             episode is None or release_date < newer_than or release_date > datetime.now(),
