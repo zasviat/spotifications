@@ -10,6 +10,7 @@ from src.models import Release  # noqa: E402
 
 DEFAULT_RELEASES_GROUPS = ",".join(("album", "single", "compilation", "appears_on"))
 VARIOUS_ARTISTS = "Various Artists"
+RESPONSE_LIMIT = 50
 
 
 class GetSpotipyClient:
@@ -36,7 +37,7 @@ class GetSpotipyClient:
 
     def _get_playlist_songs(self, playlist_id: str, offset: int = 0):
         """Get songs from specific playlist"""
-        response = self.client.playlist_tracks(playlist_id, offset=offset)
+        response = self.client.playlist_tracks(playlist_id, offset=offset, limit=RESPONSE_LIMIT)
         logger.debug(f"Get songs of playlist {playlist_id}. Offset: {offset}")
 
         return response["items"], response["limit"], response["total"]
@@ -124,7 +125,7 @@ class GetSpotipyClient:
 
     def get_album_songs(self, album_id: str):
         """Get songs from specific album"""
-        album_songs = self.client.album_tracks(album_id)['items']
+        album_songs = self.client.album_tracks(album_id, limit=RESPONSE_LIMIT)['items']
         logger.debug(f"Get songs of album {album_id}")
         return [song['uri'] for song in album_songs]
 
@@ -135,7 +136,7 @@ class GetSpotipyClient:
         return any(self.client.current_user_following_artists(artists_ids))
 
     def _get_artists_ids(self, after=None) -> tuple:
-        artists = self.client.current_user_followed_artists(after=after)['artists']
+        artists = self.client.current_user_followed_artists(after=after, limit=RESPONSE_LIMIT)['artists']
         return [item['id'] for item in artists['items']], artists['next']
 
     def _get_artist_releases(
@@ -145,7 +146,10 @@ class GetSpotipyClient:
             newer_than = datetime.now()
 
         response = self.client.artist_albums(
-            artist_id=artist_id, offset=offset, include_groups=DEFAULT_RELEASES_GROUPS,
+            artist_id=artist_id,
+            offset=offset,
+            include_groups=DEFAULT_RELEASES_GROUPS,
+            limit=RESPONSE_LIMIT,
         )
 
         return [
@@ -155,7 +159,7 @@ class GetSpotipyClient:
         ], response['limit'], response['total']
 
     def _get_favorite_shows(self, offset=None) -> tuple:
-        shows = self.client.current_user_saved_shows(offset=offset)
+        shows = self.client.current_user_saved_shows(offset=offset, limit=RESPONSE_LIMIT)
         return [item['show']['id'] for item in shows['items']], shows['limit'], shows['total']
 
     def _get_show_episodes(
@@ -166,6 +170,7 @@ class GetSpotipyClient:
 
         response = self.client.show_episodes(
             show_id=show_id, offset=offset,
+            limit=RESPONSE_LIMIT,
         )
 
         return [
