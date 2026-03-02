@@ -155,7 +155,7 @@ class GetSpotipyClient:
         return [
             Release.from_spotipy(release)
             for release in response["items"]
-            if not self.skip_release(release, newer_than)
+            if release and not self.skip_release(release, newer_than)
         ], response['limit'], response['total']
 
     def _get_favorite_shows(self, offset=None) -> tuple:
@@ -176,7 +176,7 @@ class GetSpotipyClient:
         return [
             Release.from_spotipy(episode)
             for episode in response["items"]
-            if not self.skip_episode(episode, newer_than)
+            if episode and not self.skip_episode(episode, newer_than)
         ], response['limit'], response['total']
 
     @staticmethod
