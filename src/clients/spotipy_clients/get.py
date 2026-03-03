@@ -29,7 +29,7 @@ class GetSpotipyClient:
             if total <= offset:
                 break
             offset += limit
-        breakpoint()
+
         return {k: v for k, v in duplicates.items() if len(v) > 1}
 
     def get_track(self, track_id: str):
