@@ -24,7 +24,17 @@ class GetSpotipyClient:
             songs, limit, total = self._get_playlist_songs(playlist_id, offset)
 
             for song in songs:
-                duplicates.setdefault(song['track']["name"], []).append(song['track']["uri"])
+                track = song.get("track") or {}
+
+                if not track.get("uri"):
+                    continue
+
+                name = track["name"]
+                artist_ids = tuple(sorted(
+                    a["id"] for a in track.get("artists", []) if a.get("id")
+                ))
+                key = (name, artist_ids)
+                duplicates.setdefault(key, []).append(track["uri"])
             logger.debug(f"Get songs of playlist {playlist_id}. Offset: {offset}")
             if total <= offset:
                 break

@@ -11,7 +11,11 @@ from src.proxy import get_spotify_proxy
 from src.clients.spotipy_client import SpotipyClient
 from src.models import NotificationKeyboardButton
 from src.clients.telegram_client import TelegramClient
-from src.constants import SPOTIFICATIONS_PLAYLIST_LINK, SPOTIFICATIONS_PLAYLIST_ID
+from src.constants import (
+    MAIN_PLAYLIST_ID,
+    SPOTIFICATIONS_PLAYLIST_LINK,
+    SPOTIFICATIONS_PLAYLIST_ID,
+)
 from loguru import logger
 
 
@@ -73,29 +77,61 @@ def welcome():
     return HTMLResponse(content="<h1>Welcome to Spotification Webhook</h1>", status_code=200)
 
 
+def handle_add_new_release(release_uri):
+    add_release_to_playlist(release_uri, spotipy_client)
+    release = spotipy_client.get.get_release(release_uri=release_uri)
+
+    text = f"🎧 Added to playlist!\n\n🎶<b>{release.name}</b>"
+    if release.artists:
+        text = f"{text} by <b>{release.artists}</b>"
+
+    telegram_client.send_message_with_image(
+        image_url=release.cover_url,
+        text=text,
+        keyboard=telegram_client.compose_keyboard(
+            NotificationKeyboardButton(
+                url=SPOTIFICATIONS_PLAYLIST_LINK,
+                text="Check ListenToMe playlist!",
+            ).model_dump()
+        )
+    )
+
+
+def handle_delete_track_from_playlist(query_id: str, track_uri: str):
+    spotipy_client.post.delete_track(
+        playlist_id=MAIN_PLAYLIST_ID,
+        track_id=track_uri,
+    )
+    spotify_track_id = track_uri.rsplit(':', 1)[-1]
+    track_url = f'https://open.spotify.com/track/{spotify_track_id}'
+    telegram_client.answer_callback_query(
+        callback_query_id=query_id,
+        text='Removed from playlist',
+    )
+    telegram_client.send_message(
+        f'Removed duplicate from playlist: <a href="{track_url}">open on Spotify</a>',
+    )
+
+
 @app.post("/api/webhook")
 async def telegram_webhook(request: Request):
     webhook_response = await request.json()
-    query = webhook_response['callback_query']
-
-    release_uri = json.loads(query['data']).get("release_uri")
-    if release_uri is not None:
-        add_release_to_playlist(release_uri, spotipy_client)
-        release = spotipy_client.get.get_release(release_uri=release_uri)
-
-        telegram_client.chat_id = query['message']['chat']['id']
-        text = f"🎧 Added to playlist!\n\n🎶<b>{release.name}</b>"
-        if release.artists:
-            text = f"{text} by <b>{release.artists}</b>"
-
-        telegram_client.send_message_with_image(
-            image_url=release.cover_url,
-            text=text,
-            keyboard=telegram_client.compose_keyboard(
-                NotificationKeyboardButton(
-                    url=SPOTIFICATIONS_PLAYLIST_LINK,
-                    text="Check ListenToMe playlist!",
-                ).model_dump()
-            )
-        )
+    query = webhook_response.get('callback_query')
+    if not query:
+        logger.debug("Webhook update without callback_query")
         return {"ok": True}
+
+    data = json.loads(query['data'])
+    telegram_client.chat_id = query['message']['chat']['id']
+
+    delete_track_uri = data.get('delete_track_uri')
+    if delete_track_uri is not None:
+        handle_delete_track_from_playlist(query_id=query["id"], track_uri=delete_track_uri)
+        return {"ok": True}
+
+    release_uri = data.get("release_uri")
+    if release_uri is not None:
+        handle_add_new_release(release_uri=release_uri)
+        return {"ok": True}
+
+    return {"ok": True}

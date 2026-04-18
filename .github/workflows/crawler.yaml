@@ -47,6 +47,16 @@ jobs:
           git commit -m "[GHA] Update last crawling date" --allow-empty
           git push
 
+      - name: Crawl & notify about main playlist duplicates
+        run: |
+          source .venv/bin/activate
+          python src/duplicates_crawler.py
+        env:
+          SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
+          SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
+          SPOTIFY_REFRESH_TOKEN: ${{ secrets.SPOTIFY_REFRESH_TOKEN }}
+          TELEGRAM_BOT_TOKEN:  ${{ secrets.TELEGRAM_BOT_TOKEN }}
+
       - name: Upload crawler logs
         uses: actions/upload-artifact@v4
         with:

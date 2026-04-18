@@ -6,6 +6,7 @@ from constants import (
     EPISODE_PATTERN,
     NOTITICATION_PATTERN,
     NO_NEW_RELEASES_IMAGE,
+    DEFAULT_COVER_IMAGE,
     SPOTIFICATIONS_PLAYLIST_LINK,
 )
 from models import NotificationKeyboardButton, Release
@@ -51,4 +52,43 @@ def send_release_notification(telegram_client: TelegramClient, release: Release)
                 callback_data=json.dumps({"release_uri": release.uri}),
             ).model_dump(exclude_none=True)
         )
+    )
+
+
+def send_duplicate_group_notification(
+        telegram_client: TelegramClient,
+        playlist_rows: list[tuple[str, str, str, str]],
+        cover_url,
+):
+    """One message per duplicate group; one button per playlist row (original + copies).
+
+    playlist_rows: (track_uri, name, artists, album) per occurrence, playlist order.
+    Caption lines: {name} by {artists} (same as button text without album).
+    Button: {name} by {artists} ({album}) when album is set.
+    """
+    body_lines = [
+        f"{name} by {artists}"
+        if artists else name
+        for _, name, artists, _ in playlist_rows
+    ]
+    text = "\n".join([
+        "<b>Found duplicates in playlist</b>",
+        *body_lines,
+    ])
+    buttons = []
+    for uri, name, artists, album in playlist_rows:
+        label = f"{name} by {artists}"
+        if album:
+            label = f"{label} ({album})"
+        buttons.append(
+            NotificationKeyboardButton(
+                text=label,
+                callback_data=json.dumps({"delete_track_uri": uri}),
+            ).model_dump(exclude_none=True)
+        )
+
+    telegram_client.send_message_with_image(
+        text=text,
+        image_url=cover_url or DEFAULT_COVER_IMAGE,
+        keyboard=telegram_client.compose_keyboard(*buttons),
     )
