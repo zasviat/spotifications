@@ -1,6 +1,6 @@
 from .spotipy_clients import GetSpotipyClient, PostSpotipyClient
 from loguru import logger
-from proxy import get_spotify_proxy
+from ..proxy import get_spotify_proxy
 
 
 class SpotipyClient:
