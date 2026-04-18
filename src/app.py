@@ -97,17 +97,13 @@ def handle_add_new_release(release_uri):
     )
 
 
-def handle_delete_track_from_playlist(query_id: str, track_uri: str):
+def handle_delete_track_from_playlist(track_uri: str):
     spotipy_client.post.delete_track(
         playlist_id=MAIN_PLAYLIST_ID,
         track_id=track_uri,
     )
     spotify_track_id = track_uri.rsplit(':', 1)[-1]
     track_url = f'https://open.spotify.com/track/{spotify_track_id}'
-    telegram_client.answer_callback_query(
-        callback_query_id=query_id,
-        text='Removed from playlist',
-    )
     telegram_client.send_message(
         f'Removed duplicate from playlist: <a href="{track_url}">open on Spotify</a>',
     )
@@ -126,7 +122,7 @@ async def telegram_webhook(request: Request):
 
     delete_track_uri = data.get('delete_track_uri')
     if delete_track_uri is not None:
-        handle_delete_track_from_playlist(query_id=query["id"], track_uri=delete_track_uri)
+        handle_delete_track_from_playlist(track_uri=delete_track_uri)
         return {"ok": True}
 
     release_uri = data.get("release_uri")

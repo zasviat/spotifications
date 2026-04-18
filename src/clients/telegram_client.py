@@ -47,18 +47,6 @@ class TelegramClient:
             f"[TELEGRAM_NOTIFIER] {response.status_code} {pprint.pformat(response.json())}"
         )
 
-    def answer_callback_query(
-            self, callback_query_id: str, text: Optional[str] = None, show_alert: bool = False):
-        response = requests.post(
-            url=self.answer_callback_query,
-            json={
-                'callback_query_id': callback_query_id,
-                'text': text,
-                'show_alert': show_alert,
-            },
-        )
-        logger.debug(f"answerCallbackQuery: {response.status_code} {response.text}")
-
     @property
     def send_photo_endpoint(self):
         return f'https://api.telegram.org/bot{self.token}/sendPhoto'
@@ -66,10 +54,6 @@ class TelegramClient:
     @property
     def send_message_endpoint(self):
         return f'https://api.telegram.org/bot{self.token}/sendMessage'
-
-    @property
-    def answer_callback_query_endpoint(self):
-        return f'https://api.telegram.org/bot{self.token}/answerCallbackQuery'
 
     @staticmethod
     def compose_keyboard(*buttons):

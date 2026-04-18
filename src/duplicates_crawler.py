@@ -48,7 +48,7 @@ def send_duplicate_notifications(duplicates: dict) -> None:
 
 def main():
     duplicates = get_duplicates()
-    logger.info(f"Found {len(duplicates)} groups")
+    logger.info(f"Found {len(duplicates)} duplicate groups")
     send_duplicate_notifications(duplicates)
 
 
