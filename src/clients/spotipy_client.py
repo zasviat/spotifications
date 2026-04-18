@@ -1,5 +1,6 @@
 from .spotipy_clients import GetSpotipyClient, PostSpotipyClient
 from loguru import logger
+from proxy import get_spotify_proxy
 
 
 class SpotipyClient:
@@ -10,3 +11,7 @@ class SpotipyClient:
         self.post = PostSpotipyClient(self.client)
 
         logger.success("Initialized new Spotipy client")
+
+
+def get_spotipy_client():
+    return SpotipyClient(spotipy_client=get_spotify_proxy())
