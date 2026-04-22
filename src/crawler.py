@@ -36,7 +36,7 @@ def get_last_crawling_date():
 
 def main():
     shared_spotipy_client = get_spotipy_client()
-    number_of_workers = int(os.environ.get("SPOTIFY_RELEASES_WORKERS", "4"))
+    number_of_workers = int(os.environ.get("SPOTIFY_RELEASES_WORKERS", "3"))
     telegram_client = TelegramClient(
         chat_id=TELEGRAM_CHAT_ID,
         token=os.environ['TELEGRAM_BOT_TOKEN'],
