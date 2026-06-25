@@ -76,6 +76,10 @@ def add_release_to_playlist(release_id: str, spotipy_client: SpotipyClient):
 def welcome():
     return HTMLResponse(content="<h1>Welcome to Spotification Webhook</h1>", status_code=200)
 
+@app.get('/me')
+def me(request: Request):
+  return request.client.host
+
 
 def handle_add_new_release(release_uri):
     add_release_to_playlist(release_uri, spotipy_client)
