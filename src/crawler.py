@@ -31,7 +31,7 @@ def update_last_crawling_date(last_crawling_date):
 
 def get_last_crawling_date():
     with open(".last_crawling_date") as file:
-        return datetime.datetime.fromisoformat(file.readline())
+        return datetime.datetime.fromisoformat(file.readline().strip())
 
 
 def main():
