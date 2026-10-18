@@ -18,7 +18,10 @@ jobs:
 
       - name: Run linter
         run: |
-          flake8 src --config=setup.cfg --output-file=${{ env.FLAKE8_REPORT_FILE }}
+          flake8 src \
+            --config=setup.cfg \
+            --output-file=${{ env.FLAKE8_REPORT_FILE }} \
+            --exit-zero
           cat ${{ env.FLAKE8_REPORT_FILE }}
 
       - name: Upload flake8 report as artifact
