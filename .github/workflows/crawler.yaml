@@ -3,7 +3,8 @@ name: 🎧 Crawling latest artists releases
 on:
   workflow_dispatch:
   schedule:
-    - cron: '30 06 * * *'
+    # Every day at 10:17 Kyiv time (09:17 UTC during summer, 08:17 UTC during winter)
+    - cron: '17 07 * * *'
 
 jobs:
   run-crawler:
