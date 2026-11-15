@@ -4,10 +4,10 @@ import os
 
 from clients.spotipy_client import get_spotipy_client
 from clients.telegram_client import TelegramClient
-from constants import MAIN_PLAYLIST_ID, TELEGRAM_CHAT_ID
+from constants import MAIN_PLAYLIST_ID, LISTEN_LATER_PLAYLIST_ID, TELEGRAM_CHAT_ID
 from notifications import send_duplicate_group_notification
 
-PLAYLISTS_TO_CHECK_DUPLICATED = {
+PLAYLISTS_TO_CHECK_DUPLICATES = {
     "ReAniMateD": MAIN_PLAYLIST_ID,
     "Listen Later": LISTEN_LATER_PLAYLIST_ID,
 }
