@@ -40,10 +40,10 @@ def notify_no_releases(telegram_client: TelegramClient, crawling_date: datetime.
 
 def get_new_release_callback_data(release_uri: str):
     if TRACK_PREFIX in release_uri:
-        item_id = uri.removeprefix(TRACK_PREFIX)
+        item_id = release_uri.removeprefix(TRACK_PREFIX)
         return f"add:t:{item_id}"
     elif EPISODE_PREFIX in release_uri:
-        item_id = uri.removeprefix(EPISODE_PREFIX)
+        item_id = release_uri.removeprefix(EPISODE_PREFIX)
         return f"add:e:{item_id}"
 
     raise ValueError(f"Failed to compose callback data to add new release: {release_uri}")
