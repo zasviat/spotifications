@@ -45,12 +45,11 @@ def main():
     last_crawling_date = get_last_crawling_date()
     processed_releases_uris = get_processed_releases_uris()
 
-    # new_releases = get_artists_latest_releases(
-    #     client=shared_spotipy_client,
-    #     newer_than=last_crawling_date,
-    #     number_of_workers=number_of_workers,
-    # )
-    new_releases = []
+    new_releases = get_artists_latest_releases(
+        client=shared_spotipy_client,
+        newer_than=last_crawling_date,
+        number_of_workers=number_of_workers,
+    )
 
     new_episodes = get_shows_latest_episodes(
         client=shared_spotipy_client,
