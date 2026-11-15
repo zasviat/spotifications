@@ -17,10 +17,10 @@ load_dotenv()
 
 def get_duplicates(playlist_id: str):
     spotipy_client = get_spotipy_client()
-    return spotipy_client.get.get_playlist_duplicates(playlist_id=MAIN_PLAYLIST_ID)
+    return spotipy_client.get.get_playlist_duplicates(playlist_id=playlist_id)
 
 
-def send_duplicate_notifications(duplicates: dict) -> None:
+def send_duplicate_notifications(duplicates: dict, playlist_id: str) -> None:
     spotipy_client = get_spotipy_client()
     telegram_client = TelegramClient(
         chat_id=TELEGRAM_CHAT_ID,
@@ -47,6 +47,7 @@ def send_duplicate_notifications(duplicates: dict) -> None:
             telegram_client,
             playlist_rows=playlist_rows,
             cover_url=cover_url,
+            playlist_id=playlist_id
         )
 
 
@@ -54,7 +55,7 @@ def main():
     for playlist_name, playlist_id in PLAYLISTS_TO_CHECK_DUPLICATES.items():
         duplicates = get_duplicates(playlist_id=playlist_id)
         logger.info(f"Found {len(duplicates)} duplicate groups in playlist {playlist_id}")
-        send_duplicate_notifications(duplicates)
+        send_duplicate_notifications(duplicates, playlist_id)
 
 
 if __name__ == "__main__":

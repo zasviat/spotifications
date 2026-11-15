@@ -12,7 +12,6 @@ from src.clients.spotipy_client import SpotipyClient
 from src.models import NotificationKeyboardButton
 from src.clients.telegram_client import TelegramClient
 from src.constants import (
-    MAIN_PLAYLIST_ID,
     LISTEN_LATER_PLAYLIST_LINK,
     LISTEN_LATER_PLAYLIST_ID,
 )
@@ -102,9 +101,9 @@ def handle_add_new_release(release_uri):
     )
 
 
-def handle_delete_track_from_playlist(track_uri: str):
+def handle_delete_track_from_playlist(track_uri: str, playlist_id: str):
     spotipy_client.post.delete_track(
-        playlist_id=MAIN_PLAYLIST_ID,
+        playlist_id=playlist_id,
         track_id=track_uri,
     )
     spotify_track_id = track_uri.rsplit(':', 1)[-1]
@@ -126,8 +125,9 @@ async def telegram_webhook(request: Request):
     telegram_client.chat_id = query['message']['chat']['id']
 
     delete_track_uri = data.get('delete_track_uri')
+    playlist_id = data.get('playlist_id')
     if delete_track_uri is not None:
-        handle_delete_track_from_playlist(track_uri=delete_track_uri)
+        handle_delete_track_from_playlist(track_uri=delete_track_uri, playlist_id=playlist_id)
         return {"ok": True}
 
     release_uri = data.get("release_uri")

@@ -59,6 +59,7 @@ def send_duplicate_group_notification(
         telegram_client: TelegramClient,
         playlist_rows: list[tuple[str, str, str, str]],
         cover_url,
+        playlist_id,
 ):
     """One message per duplicate group; one button per playlist row (original + copies).
 
@@ -83,7 +84,7 @@ def send_duplicate_group_notification(
         buttons.append(
             NotificationKeyboardButton(
                 text=label,
-                callback_data=json.dumps({"delete_track_uri": uri}),
+                callback_data=json.dumps({"delete_track_uri": uri, "playlist_id": playlist_id}),
             ).model_dump(exclude_none=True)
         )
 
