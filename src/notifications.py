@@ -20,7 +20,7 @@ def get_del_callback_data(uri: str, playlist_id: str):
         return f"del:t:{item_id}:{playlist_id}"
     elif EPISODE_PREFIX in uri:
         item_id = uri.removeprefix(EPISODE_PREFIX)
-        return f"del:t:{item_id}:{playlist_id}"
+        return f"del:e:{item_id}:{playlist_id}"
 
     raise ValueError(f"Cannot compose callback data for {uri}. URI should be for either a track or a show.")
 
