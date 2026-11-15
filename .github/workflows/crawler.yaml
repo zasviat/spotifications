@@ -1,4 +1,4 @@
-name: 🎧 Crawling latest artists releases
+name: 🎧 Crawling latest artists releases and dulicates
 
 on:
   workflow_dispatch:
