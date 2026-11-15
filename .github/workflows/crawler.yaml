@@ -2,6 +2,15 @@ name: 🎧 Crawling latest artists releases
 
 on:
   workflow_dispatch:
+    inputs:
+      crawl-new-releases:
+        description: Run new releases crawler
+        type: boolean
+        default: true
+      crawl-duplicates:
+        description: Run duplicates crawler
+        type: boolean
+        default: true
   schedule:
     # Every day at 07:17 UTC = 10:17 Kyiv time in summer (UTC+3), 09:17 in winter (UTC+2)
     - cron: '17 07 * * *'
@@ -26,6 +35,7 @@ jobs:
           uv pip install -r requirements.txt
 
       - name: Crawl & notify about new updates
+        if: github.event_name != 'workflow_dispatch' || inputs.crawl-new-releases
         run: |
           source .venv/bin/activate
           python src/crawler.py
@@ -36,6 +46,7 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
 
       - name: Save .last_crawling_date and .processed_releases_uris files
+        if: github.event_name != 'workflow_dispatch' || inputs.crawl-new-releases
         run: |
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
@@ -43,7 +54,8 @@ jobs:
           git commit -m "[GHA] Update last crawling date" --allow-empty
           git push
 
-      - name: Crawl & notify about main playlist duplicates
+      - name: Crawl & notify about playlists duplicates
+        if: github.event_name != 'workflow_dispatch' || inputs.crawl-duplicates
         run: |
           source .venv/bin/activate
           python src/duplicates_crawler.py
