@@ -38,6 +38,17 @@ def notify_no_releases(telegram_client: TelegramClient, crawling_date: datetime.
     )
 
 
+def get_new_release_callback_data(release_uri: str):
+    if TRACK_PREFIX in release_uri:
+        item_id = uri.removeprefix(TRACK_PREFIX)
+        return f"add:t:{item_id}"
+    elif EPISODE_PREFIX in release_uri:
+        item_id = uri.removeprefix(EPISODE_PREFIX)
+        return f"add:e:{item_id}"
+
+    raise ValueError(f"Failed to compose callback data to add new release: {release_uri}")
+
+
 def send_release_notification(telegram_client: TelegramClient, release: Release):
     text = NOTITICATION_PATTERN.format(
         artists=release.artists,
@@ -62,7 +73,7 @@ def send_release_notification(telegram_client: TelegramClient, release: Release)
             ).model_dump(exclude_none=True),
             NotificationKeyboardButton(
                 text="❤️",
-                callback_data=json.dumps({"release_uri": release.uri}),
+                callback_data=get_new_release_callback_data(release.uri),
             ).model_dump(exclude_none=True)
         )
     )

@@ -116,7 +116,7 @@ def handle_delete_track_from_playlist(track_uri: str, playlist_id: str):
 def parse_callback_data(callback_data):
     try:
         parts = callback_data.split(":")
-        uri = f"{TRACK_PREFIX}:{parts[2]}" if parts[1] == "t" else f"{EPISODE_PREFIX}:{parts[2]}"
+        uri = f"{TRACK_PREFIX}{parts[2]}" if parts[1] == "t" else f"{EPISODE_PREFIX}{parts[2]}"
         if "del" in parts:
             return {
                 "delete_track_uri": uri,
