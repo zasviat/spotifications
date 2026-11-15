@@ -7,7 +7,7 @@ from constants import (
     NOTITICATION_PATTERN,
     NO_NEW_RELEASES_IMAGE,
     DEFAULT_COVER_IMAGE,
-    SPOTIFICATIONS_PLAYLIST_LINK,
+    LISTEN_LATER_PLAYLIST_LINK,
 )
 from models import NotificationKeyboardButton, Release
 
@@ -18,8 +18,8 @@ def notify_no_releases(telegram_client: TelegramClient, crawling_date: datetime.
         image_url=NO_NEW_RELEASES_IMAGE,
         keyboard=telegram_client.compose_keyboard(
             NotificationKeyboardButton(
-                url=SPOTIFICATIONS_PLAYLIST_LINK,
-                text="Check ListenToMe playlist!",
+                url=LISTEN_LATER_PLAYLIST_LINK,
+                text="Check Listen Later playlist!",
             ).model_dump()
         )
     )

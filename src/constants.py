@@ -14,8 +14,8 @@ NO_TG_BOT_UPDATES_IMAGE = "https://raw.githubusercontent.com/zasviat/spotificati
 WAIT_BEFORE_UPDATES_IMAGE = "https://raw.githubusercontent.com/zasviat/spotifications/refs/heads/main/src/images/wait_before_updates_image.jpg"
 DEFAULT_COVER_IMAGE = "https://raw.githubusercontent.com/zasviat/spotifications/refs/heads/main/src/images/default_cover_image.png"
 
-SPOTIFICATIONS_PLAYLIST_LINK = "https://open.spotify.com/playlist/3vtxCgkU9wpiyppMvbWJow?si=f363460bd5b54328"
-SPOTIFICATIONS_PLAYLIST_ID = "3vtxCgkU9wpiyppMvbWJow"
+LISTEN_LATER_PLAYLIST_LINK = "https://open.spotify.com/playlist/3vtxCgkU9wpiyppMvbWJow?si=f363460bd5b54328"
+LISTEN_LATER_PLAYLIST_ID = "3vtxCgkU9wpiyppMvbWJow"
 
 MAIN_PLAYLIST_ID = "5p0Q2yU0Evpy0jMZju8Hei"
 TELEGRAM_CHAT_ID = "787823881"

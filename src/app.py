@@ -13,8 +13,8 @@ from src.models import NotificationKeyboardButton
 from src.clients.telegram_client import TelegramClient
 from src.constants import (
     MAIN_PLAYLIST_ID,
-    SPOTIFICATIONS_PLAYLIST_LINK,
-    SPOTIFICATIONS_PLAYLIST_ID,
+    LISTEN_LATER_PLAYLIST_LINK,
+    LISTEN_LATER_PLAYLIST_ID,
 )
 from loguru import logger
 
@@ -66,7 +66,7 @@ def add_release_to_playlist(release_id: str, spotipy_client: SpotipyClient):
         return
 
     spotipy_client.post.add_songs_to_playlist(
-        playlist_id=SPOTIFICATIONS_PLAYLIST_ID,
+        playlist_id=LISTEN_LATER_PLAYLIST_ID,
         songs_ids=songs_to_add_ids,
     )
     logger.info(f"Added to playlist: {songs_to_add_ids}")
@@ -95,8 +95,8 @@ def handle_add_new_release(release_uri):
         text=text,
         keyboard=telegram_client.compose_keyboard(
             NotificationKeyboardButton(
-                url=SPOTIFICATIONS_PLAYLIST_LINK,
-                text="Check ListenToMe playlist!",
+                url=LISTEN_LATER_PLAYLIST_LINK,
+                text="Check Listen Later playlist!",
             ).model_dump()
         )
     )
