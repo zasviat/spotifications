@@ -19,3 +19,6 @@ LISTEN_LATER_PLAYLIST_ID = "3vtxCgkU9wpiyppMvbWJow"
 
 MAIN_PLAYLIST_ID = "5p0Q2yU0Evpy0jMZju8Hei"
 TELEGRAM_CHAT_ID = "787823881"
+
+TRACK_PREFIX = "spotify:track"
+EPISODE_PREFIX = "spotify:episode"

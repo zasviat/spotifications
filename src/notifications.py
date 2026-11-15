@@ -8,8 +8,21 @@ from constants import (
     NO_NEW_RELEASES_IMAGE,
     DEFAULT_COVER_IMAGE,
     LISTEN_LATER_PLAYLIST_LINK,
+    TRACK_PREFIX,
+    EPISODE_PREFIX
 )
 from models import NotificationKeyboardButton, Release
+
+
+def get_del_callback_data(uri: str, playlist_id: str):
+    if TRACK_PREFIX in uri:
+        item_id = uri.removeprefix(TRACK_PREFIX)
+        return f"del:t:{item_id}:{playlist_id}"
+    elif EPISODE_PREFIX in uri:
+        item_id = uri.removeprefix(EPISODE_PREFIX)
+        return f"del:t:{item_id}:{playlist_id}"
+
+    raise ValueError(f"Cannot compose callback data for {uri}. URI should be for either a track or a show.")
 
 
 def notify_no_releases(telegram_client: TelegramClient, crawling_date: datetime.datetime):
@@ -84,7 +97,7 @@ def send_duplicate_group_notification(
         buttons.append(
             NotificationKeyboardButton(
                 text=label,
-                callback_data=json.dumps({"delete_track_uri": uri, "playlist_id": playlist_id}),
+                callback_data=get_del_callback_data(uri=uri, playlist_id=playlist_id),
             ).model_dump(exclude_none=True)
         )
 

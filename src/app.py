@@ -2,7 +2,6 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 
-import json
 import os
 from dotenv import load_dotenv
 import requests
@@ -14,6 +13,7 @@ from src.clients.telegram_client import TelegramClient
 from src.constants import (
     LISTEN_LATER_PLAYLIST_LINK,
     LISTEN_LATER_PLAYLIST_ID,
+    TRACK_PREFIX, EPISODE_PREFIX
 )
 from loguru import logger
 
@@ -113,6 +113,23 @@ def handle_delete_track_from_playlist(track_uri: str, playlist_id: str):
     )
 
 
+def parse_callback_data(callback_data):
+    try:
+        parts = callback_data.split(":")
+        uri = f"{TRACK_PREFIX}:{parts[2]}" if parts[1] == "t" else f"{EPISODE_PREFIX}:{parts[2]}"
+        if "del" in parts:
+            return {
+                "delete_track_uri": uri,
+                "playlist_id": parts[3]
+            }
+        elif "add" in parts:
+            return {
+                "release_uri": uri
+            }
+    except:  # noqa: E722
+        raise ValueError(f"Failed to parse callback_data: {callback_data}")
+
+
 @app.post("/api/webhook")
 async def telegram_webhook(request: Request):
     webhook_response = await request.json()
@@ -121,7 +138,7 @@ async def telegram_webhook(request: Request):
         logger.debug("Webhook update without callback_query")
         return {"ok": True}
 
-    data = json.loads(query['data'])
+    data = parse_callback_data(query['data'])
     telegram_client.chat_id = query['message']['chat']['id']
 
     delete_track_uri = data.get('delete_track_uri')
