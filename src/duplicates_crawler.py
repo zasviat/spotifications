@@ -7,11 +7,15 @@ from clients.telegram_client import TelegramClient
 from constants import MAIN_PLAYLIST_ID, TELEGRAM_CHAT_ID
 from notifications import send_duplicate_group_notification
 
+PLAYLISTS_TO_CHECK_DUPLICATED = {
+    "ReAniMateD": MAIN_PLAYLIST_ID,
+    "Listen Later": LISTEN_LATER_PLAYLIST_ID,
+}
 
 load_dotenv()
 
 
-def get_duplicates():
+def get_duplicates(playlist_id: str):
     spotipy_client = get_spotipy_client()
     return spotipy_client.get.get_playlist_duplicates(playlist_id=MAIN_PLAYLIST_ID)
 
@@ -47,9 +51,10 @@ def send_duplicate_notifications(duplicates: dict) -> None:
 
 
 def main():
-    duplicates = get_duplicates()
-    logger.info(f"Found {len(duplicates)} duplicate groups")
-    send_duplicate_notifications(duplicates)
+    for playlist_name, playlist_id in PLAYLISTS_TO_CHECK_DUPLICATES.items():
+        duplicates = get_duplicates(playlist_id=playlist_id)
+        logger.info(f"Found {len(duplicates)} duplicate groups in playlist {playlist_id}")
+        send_duplicate_notifications(duplicates)
 
 
 if __name__ == "__main__":
