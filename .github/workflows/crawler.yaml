@@ -3,7 +3,7 @@ name: 🎧 Crawling latest artists releases
 on:
   workflow_dispatch:
   schedule:
-    # Every day at 10:17 Kyiv time (09:17 UTC during summer, 08:17 UTC during winter)
+    # Every day at 07:17 UTC = 10:17 Kyiv time in summer (UTC+3), 09:17 in winter (UTC+2)
     - cron: '17 07 * * *'
 
 jobs:
@@ -13,24 +13,17 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Set up Python
-        uses: actions/setup-python@v7
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v6
         with:
           python-version: '3.13'
-
-      - name: Cache pip dependencies
-        uses: actions/cache@v6
-        with:
-          path: ~/.cache/pip
-          key: pip-${{ runner.os }}-${{ hashFiles('requirements.txt') }}
-          restore-keys: |
-            pip-${{ runner.os }}-
+          enable-cache: true
+          cache-dependency-glob: requirements.txt
 
       - name: Set up virtualenv and install requirements
         run: |
-          python -m venv .venv
-          source .venv/bin/activate
-          pip install -r requirements.txt
+          uv venv .venv
+          uv pip install -r requirements.txt
 
       - name: Crawl & notify about new updates
         run: |
@@ -40,7 +33,7 @@ jobs:
           SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
           SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
           SPOTIFY_REFRESH_TOKEN: ${{ secrets.SPOTIFY_REFRESH_TOKEN }}
-          TELEGRAM_BOT_TOKEN:  ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
 
       - name: Save .last_crawling_date and .processed_releases_uris files
         run: |
@@ -58,9 +51,10 @@ jobs:
           SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
           SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
           SPOTIFY_REFRESH_TOKEN: ${{ secrets.SPOTIFY_REFRESH_TOKEN }}
-          TELEGRAM_BOT_TOKEN:  ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
 
       - name: Upload crawler logs
+        if: always()
         uses: actions/upload-artifact@v7
         with:
           name: crawler_logs
