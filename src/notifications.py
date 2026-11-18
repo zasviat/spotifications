@@ -1,5 +1,4 @@
 import datetime
-import json
 
 from clients.telegram_client import TelegramClient
 from constants import (
@@ -9,7 +8,8 @@ from constants import (
     DEFAULT_COVER_IMAGE,
     LISTEN_LATER_PLAYLIST_LINK,
     TRACK_PREFIX,
-    EPISODE_PREFIX
+    EPISODE_PREFIX,
+    ALBUM_PREFIX,
 )
 from models import NotificationKeyboardButton, Release
 

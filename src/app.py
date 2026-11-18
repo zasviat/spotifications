@@ -13,7 +13,7 @@ from src.clients.telegram_client import TelegramClient
 from src.constants import (
     LISTEN_LATER_PLAYLIST_LINK,
     LISTEN_LATER_PLAYLIST_ID,
-    TRACK_PREFIX, EPISODE_PREFIX
+    TRACK_PREFIX, EPISODE_PREFIX, ALBUM_PREFIX
 )
 from loguru import logger
 
@@ -125,7 +125,7 @@ def parse_callback_data(callback_data):
         if release_prefix is None:
             raise ValueError(f"Unknown release: {parts[1]}")
 
-        uri = f"{prefix}{parts[2]}"
+        uri = f"{release_prefix}{parts[2]}"
 
         if "del" in parts:
             return {
