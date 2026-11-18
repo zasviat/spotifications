@@ -47,7 +47,7 @@ def get_new_release_callback_data(release_uri: str):
         return f"add:e:{item_id}"
     elif ALBUM_PREFIX in release_uri:
         item_id = release_uri.removeprefix(ALBUM_PREFIX)
-        return f"add:r:{item_id}"
+        return f"add:a:{item_id}"
 
     raise ValueError(f"Failed to compose callback data to add new release: {release_uri}")
 
