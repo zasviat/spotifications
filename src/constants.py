@@ -22,3 +22,4 @@ TELEGRAM_CHAT_ID = "787823881"
 
 TRACK_PREFIX = "spotify:track:"
 EPISODE_PREFIX = "spotify:episode:"
+ALBUM_PREFIX = "spotify:album:"

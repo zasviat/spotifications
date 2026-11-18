@@ -116,7 +116,17 @@ def handle_delete_track_from_playlist(track_uri: str, playlist_id: str):
 def parse_callback_data(callback_data):
     try:
         parts = callback_data.split(":")
-        uri = f"{TRACK_PREFIX}{parts[2]}" if parts[1] == "t" else f"{EPISODE_PREFIX}{parts[2]}"
+        release_types_prefixes = {
+            "t": TRACK_PREFIX,
+            "e": EPISODE_PREFIX,
+            "a": ALBUM_PREFIX
+        }
+        release_prefix = release_types_prefixes.get(parts[1])
+        if release_prefix is None:
+            raise ValueError(f"Unknown release: {parts[1]}")
+
+        uri = f"{prefix}{parts[2]}"
+
         if "del" in parts:
             return {
                 "delete_track_uri": uri,
